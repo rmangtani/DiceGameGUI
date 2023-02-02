@@ -69,7 +69,7 @@ public class Game {
 
         // While loop continuously asks user if they want to get the min or max
         // of three rolls or stay
-        // Loop stops when user decides to stay or if the game is over
+        // Loop stops when user decides to stay or if the game is over.
         String minOrMax = "";
         while (!minOrMax.equals("stay")) {
             System.out.println("Do you want to get the min or max of 3 rolls " +

@@ -50,7 +50,7 @@ public class Die
         return min;
     }
 
-    // Returns the sum of numRolls number of rolls
+    // Returns the sum of numRolls number of rolls.
     public int sumRolls(int numRolls) {
         int sum = 0;
         for (int i = 0; i < numRolls; i++){
