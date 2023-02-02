@@ -60,7 +60,7 @@ public class Game {
     public void levelOne() {
         Scanner input = new Scanner(System.in);
         this.printLevelOneInstructions();
-        System.out.println("Type anything on the keyboard to start the game.");
+        System.out.println("Type anything on the keyboard to start the game");
         input.nextLine();
         startGame = true;
         this.userSum = this.tenDice.roll();

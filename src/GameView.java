@@ -7,7 +7,7 @@ public class GameView extends JFrame {
     private Game game;
     public GameView(Game game) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Blackjack Dice Game!");
+        this.setTitle("Blackjack Dice Game");
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setVisible(true);
         this.game = game;
