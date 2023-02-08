@@ -1,71 +1,53 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 // Blackjack Dice Game with GUI by Ruchi Mangtani
 public class Game {
     // Instance variables
     private Die tenDice;
     private Die sixDice;
+    private ArrayList<Die> dieArr;
     private int userSum;
     private int dealerSum;
     private boolean startGame;
+
     private GameView window;
 
     // Constructor that initializes the two die and the sum of the user & dealer
     public Game() {
-        this.tenDice = new Die(10);
-        this.sixDice = new Die(6);
+        this.tenDice = new Die(10, window);
+        this.sixDice = new Die();
         this.userSum = 0;
         this.dealerSum = 0;
         this.startGame = false;
-        this.window = new GameView(this);
+        this.dieArr = new ArrayList<Die>();
+        userSum = 0;
+        this.window = new GameView(this, dieArr);
     }
 
     public boolean getStartGame() {
         return startGame;
     }
 
+    public int getUserSum() {
+        return userSum;
+    }
+
     // Method to play the game
     public void playGame() {
         Scanner input = new Scanner(System.in);
-        int level = -1;
-
-        // Loop continues running until user decides to quit the game by pressing
-        // 0 on their keyboard
-        while (level != 0) {
-            System.out.println("Welcome to BlackJack Dice! Do you want to " +
-                    "play level 1 or 2 or end game? (1/2/0)");
-            level = input.nextInt();
-            System.out.println("\n");
-
-            // Calls the respective method depending on the level
-            if (level == 1) {
-                this.levelOne();
-            }
-            else if (level == 2) {
-                this.levelTwo();
-            }
-
-            System.out.println("\n");
-        }
-    }
-
-    // Method to print instructions for level one
-    public void printLevelOneInstructions() {
-        System.out.println("You will begin with a random number from a 10-sided dice.");
-        System.out.println("You will then have the option to add the minimum " +
-                "or maximum of 3 rolls to the sum.");
-        System.out.println("Your goal is to get as close to 21 as possible.\n");
-    }
-
-    // Method to play level one
-    public void levelOne() {
-        Scanner input = new Scanner(System.in);
+        System.out.println("Welcome to BlackJack Dice!");
+        System.out.println("\n");
         this.printLevelOneInstructions();
         System.out.println("Type anything on the keyboard to start the game");
         input.nextLine();
         startGame = true;
-        this.userSum = this.tenDice.roll();
+        // Clearing the window (removing the instructions from the screen)
         window.repaint();
-        System.out.println("Rolling dice.... The dice rolled " + this.userSum + ".");
+        dieArr.add(new Die(10, window));
+        userSum = dieArr.get(0).roll();
+        System.out.println("Rolling dice.... The dice rolled " + userSum + ".");
+        dieArr.add(new Die(10, window));
+        dieArr.add(new Die(10, window));
 
         // While loop continuously asks user if they want to get the min or max
         // of three rolls or stay
@@ -77,11 +59,12 @@ public class Game {
             minOrMax = input.nextLine();
 
             if (minOrMax.equals("min")) {
-                this.userSum += this.tenDice.getMinRoll(3);
+                this.addMinRoll();
             }
             else if (minOrMax.equals("max")) {
-                this.userSum += this.tenDice.getMaxRoll(3);
+                this.addMaxRoll();
             }
+            window.repaint();
 
             this.printSumRolls(this.userSum, "user");
 
@@ -91,6 +74,14 @@ public class Game {
 
         this.levelOnePlayDealer();
         this.printWinner(this.userSum, this.dealerSum);
+    }
+
+    // Method to print instructions for level one
+    public void printLevelOneInstructions() {
+        System.out.println("You will begin with a random number from a 10-sided dice.");
+        System.out.println("You will then have the option to add the minimum " +
+                "or maximum of 3 rolls to the sum.");
+        System.out.println("Your goal is to get as close to 21 as possible.\n");
     }
 
     // The dealer's turn for level one of the game
@@ -116,63 +107,6 @@ public class Game {
                 this.dealerSum += this.tenDice.getMinRoll(3);
             }
         }
-        this.printSumRolls(this.dealerSum, "dealer");
-    }
-
-    // Method to print instructions for level 2
-    public void printLevelTwoInstructions() {
-        System.out.println("A 10-sided dice will be rolled twice and you " +
-                "will be given the sum of the two rolls.");
-        System.out.println("You will then have the option to hit (roll a " +
-                "six-sided dice and add result to the sum) or stay " +
-                "(keep the sum you have).");
-        System.out.println("You're goal is to get as close to 21 as possible " +
-                "without going over.\n");
-    }
-
-    // Method to play level two of the game
-    public void levelTwo() {
-        Scanner input = new Scanner(System.in);
-        this.printLevelTwoInstructions();
-
-        System.out.println("Rolling dice twice...");
-
-        this.userSum = this.tenDice.sumRolls(2);
-        this.printSumRolls(this.userSum, "user");
-
-        System.out.println("Do you want to hit or stay? (h/s)");
-
-        // input.next() stops reading after getting a space
-        char hitOrStay = input.next().charAt(0);
-
-        // User is continuously asked if they want to hit or stay until they
-        // decide to stay or the game is over
-        while (hitOrStay == 'h') {
-            this.userSum += this.sixDice.roll();
-            this.printSumRolls(this.userSum, "user");
-
-            if (this.isGameOver(this.userSum))
-                break;
-
-            System.out.println("Do you want to hit or stay? (h/s)");
-            hitOrStay = input.next().charAt(0);
-        }
-
-        this.levelTwoPlayDealer();
-        this.printWinner(this.userSum, this.dealerSum);
-    }
-
-    // Method for the dealer's turn in level two
-    public void levelTwoPlayDealer() {
-        System.out.println("\n");
-        this.dealerSum = this.tenDice.sumRolls(2);
-
-        // The dealer hits if their sum is less than 17
-        while (this.dealerSum < 17) {
-            System.out.println("The dealer hits.");
-            this.dealerSum += this.sixDice.roll();
-        }
-
         this.printSumRolls(this.dealerSum, "dealer");
     }
 
@@ -228,6 +162,28 @@ public class Game {
         else {
             System.out.println("The sums of both of your rolls are equal. Tie.");
         }
+    }
+
+    public void addMinRoll() {
+        int min = 11;
+        for (int i = 0; i < dieArr.size(); i++) {
+            dieArr.get(i).roll();
+            if (dieArr.get(i).getLastRoll() < min) {
+                min = dieArr.get(i).getLastRoll();
+            }
+        }
+        userSum += min;
+    }
+
+    public void addMaxRoll() {
+        int max = 0;
+        for (int i = 0; i < dieArr.size(); i++) {
+            dieArr.get(i).roll();
+            if (dieArr.get(i).getLastRoll() > max) {
+                max = dieArr.get(i).getLastRoll();
+            }
+        }
+        userSum += max;
     }
 
     public static void main(String[] args) {

@@ -1,21 +1,30 @@
 // Blackjack Dice Game with GUI by Ruchi Mangtani
+import javax.swing.*;
+import java.awt.*;
 public class Die
 {
     /** Instance Variables **/
     private int sides;
+    private int lastRoll;
+    private GameView window;
 
     /** Constructors **/
     public Die() {
         sides = 6;
     }
 
-    public Die(int numSides) {
+    public Die(int numSides, GameView viewer) {
         sides = numSides;
+        window = viewer;
     }
 
     /** Methods **/
     public int getSides() {
         return sides;
+    }
+
+    public int getLastRoll() {
+        return lastRoll;
     }
 
     /**
@@ -24,6 +33,7 @@ public class Die
      */
     public int roll() {
         int num = (int)(Math.random()*sides) + 1;
+        lastRoll = num;
         return num;
     }
 
@@ -61,5 +71,10 @@ public class Die
 
     public String toString() {
         return "This is a " + sides + " sided die.";
+    }
+
+    public void draw(Graphics g, int x, int y) {
+        Image image = new ImageIcon("Resources/" + lastRoll + ".png").getImage();
+        g.drawImage(image, x, y, window);
     }
 }
