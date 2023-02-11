@@ -51,6 +51,10 @@ public class Die
         return max;
     }
 
+    /**
+     * Rolls the dice the numRolls times
+     * and returns the minimum value of the rolls
+     */
     public int getMinRoll(int numRolls) {
         int min = Integer.MAX_VALUE;
         for(int i=0;i<numRolls;i++){
@@ -64,7 +68,7 @@ public class Die
     public int sumRolls(int numRolls) {
         int sum = 0;
         for (int i = 0; i < numRolls; i++){
-            sum += this.roll();
+            sum += roll();
         }
         return sum;
     }
@@ -73,6 +77,9 @@ public class Die
         return "This is a " + sides + " sided die.";
     }
 
+    /**
+     * Draws the correct dice image depending on it's last roll
+     */
     public void draw(Graphics g, int x, int y) {
         Image image = new ImageIcon("Resources/" + lastRoll + ".png").getImage();
         g.drawImage(image, x, y, window);

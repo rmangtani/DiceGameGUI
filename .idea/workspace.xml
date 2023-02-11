@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83d5f71b-5425-4f0a-afa3-dbb78defbb3e" name="Changes" comment="Dice can roll now">
+    <list default="true" id="83d5f71b-5425-4f0a-afa3-dbb78defbb3e" name="Changes" comment="Finished game; need to add comments &amp; some more visuals">
+      <change afterPath="$PROJECT_DIR$/Resources/die.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Die.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Die.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameView.java" afterDir="false" />
     </list>
@@ -95,12 +97,20 @@
       <option name="project" value="LOCAL" />
       <updated>1675886196656</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Finished game; need to add comments &amp; some more visuals">
+      <created>1676051896766</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1676051896766</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Blackjack dice game, have to finish front end graphics for the game" />
     <MESSAGE value="Dice can roll now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dice can roll now" />
+    <MESSAGE value="Finished game; need to add comments &amp; some more visuals" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished game; need to add comments &amp; some more visuals" />
   </component>
 </project>

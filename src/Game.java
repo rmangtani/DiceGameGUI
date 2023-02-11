@@ -1,137 +1,128 @@
+// Blackjack Dice Game with GUI by Ruchi Mangtani
 import java.util.ArrayList;
 import java.util.Scanner;
-// Blackjack Dice Game with GUI by Ruchi Mangtani
 public class Game {
-    // Instance variables
     private ArrayList<Die> dieArr;
+    private Die tenDice;
     private int userSum;
     private int dealerSum;
     private boolean hasGameStarted;
     private boolean hasGameEnded;
-    private boolean isPlayersTurn;
     private GameView window;
 
-    // Constructor that initializes the two die and the sum of the user & dealer
     public Game() {
-
-        this.userSum = 0;
-        this.dealerSum = 0;
-        this.hasGameStarted = false;
-        this.isPlayersTurn = false;
-        this.hasGameEnded = false;
-        this.dieArr = new ArrayList<Die>();
-        this.userSum = 0;
-        this.window = new GameView(this, dieArr);
+        dieArr = new ArrayList<Die>();
+        tenDice = new Die(10, window);
+        userSum = 0;
+        dealerSum = 0;
+        hasGameStarted = false;
+        hasGameEnded = false;
+        window = new GameView(this, dieArr);
     }
 
     public boolean getHasGameStarted() {
         return hasGameStarted;
-    }
-    public boolean getIsPlayersTurn() {
-        return isPlayersTurn;
     }
 
     public boolean getHasGameEnded() {
         return hasGameEnded;
     }
 
-    public void setHasGameEnded(boolean hasGameEnded) {
-        this.hasGameEnded = hasGameEnded;
-    }
-
     public int getSum(String playerName) {
-        if (playerName.equals("User")) {
+        if (playerName.equals("user")) {
             return userSum;
         }
-        if (playerName.equals("Dealer")) {
+        if (playerName.equals("dealer")) {
             return dealerSum;
         }
         return 0;
     }
 
-
-
     public void printInstructions() {
+        System.out.println("Welcome to BlackJack Dice!\n");
         System.out.println("You will begin with a random number from a 10-sided dice.");
         System.out.println("You will then have the option to add the minimum " +
                 "or maximum of 3 rolls to the sum.");
         System.out.println("Your goal is to get as close to 21 as possible.\n");
     }
 
-    // Method to play the game
+    /**
+     * Game begins with instructions. The user and the dealer's starting roll is played and 3 dice are added to dieArr for
+     * the user's turns. The winner is returned after the user and dealer have done all of their turns.
+     */
     public void playGame() {
         Scanner input = new Scanner(System.in);
-        System.out.println("Welcome to BlackJack Dice!");
-        System.out.println("\n");
-        this.printInstructions();
+        printInstructions();
         System.out.println("Type anything on the keyboard to start the game");
         input.nextLine();
         hasGameStarted = true;
-        isPlayersTurn = true;
-        // Clearing the window (removing the instructions from the screen)
-        dieArr.add(new Die(10, window));
         window.repaint();
+
+        dieArr.add(new Die(10, window));
         userSum = dieArr.get(0).roll();
         System.out.println("Rolling dice.... The dice rolled " + userSum + ".");
         dieArr.add(new Die(10, window));
         dieArr.add(new Die(10, window));
+        dealerSum = tenDice.roll();
 
-        // While loop continuously asks user if they want to get the min or max
-        // of three rolls or stay
-        // Loop stops when user decides to stay or if the game is over.
-        String minOrMax = "";
-        while (!minOrMax.equals("stay")) {
-            System.out.println("Do you want to get the min or max of 3 rolls " +
-                    "or stay? (min/max/stay)");
-            minOrMax = input.nextLine();
-
-            if (minOrMax.equals("min")) {
-                userSum += getMinRoll();
-            }
-            else if (minOrMax.equals("max")) {
-                userSum += getMaxRoll();
-            }
-            window.repaint();
-
-            this.printSumRolls(this.userSum, "user");
-
-            if (this.isGameOver(this.userSum))
-                break;
-        }
-        isPlayersTurn = false;
-        this.playDealer();
+        playUser();
+        playDealer();
         hasGameEnded = true;
         window.repaint();
-        System.out.println(printWinner(this.userSum, this.dealerSum));
+        System.out.println(returnWinner(userSum, dealerSum));
     }
 
-    // The dealer's turn
-    public void playDealer() {
-        this.dealerSum = dieArr.get(0).roll();
-        System.out.println("\n");
+    /**
+     * While loop continuously asks user if they want to get the min or max of three rolls or stay.
+     * The min or max of the three rolls are added to the user's total sum each iteration of the loop.
+     * Loop stops when user decides to stay or if the game is over.
+     **/
+    public void playUser() {
+        Scanner input = new Scanner(System.in);
+        String minOrMax = "";
 
-        // While the dealer's sum is less than 18, roll the dice
-        while (this.dealerSum < 18) {
+        while (!minOrMax.equals("stay")) {
+            System.out.println("Do you want to get the min or max of 3 rolls or stay? (min/max/stay)");
+            minOrMax = input.nextLine();
+            if ((minOrMax.equals("min")) || (minOrMax.equals("max"))) {
+                if (minOrMax.equals("min")) {
+                    userSum += minRoll();
+                }
+                else if (minOrMax.equals("max")) {
+                    userSum += maxRoll();
+                }
 
-            // Roll the max of 3 rolls if the dealer's sum is less than 12
-            if (this.dealerSum < 12) {
-                System.out.println("The dealer gets the maximum of 3 rolls.");
-                this.dealerSum += getMaxRoll();
-            }
-
-            /**
-             * Else, the dealer's sum is greater than or equal to 12, so roll
-             * the minimum of 3 rolls instead
-             */
-            else {
-                System.out.println("The dealer gets the minimum of 3 rolls.");
-                this.dealerSum += getMinRoll();
+                window.repaint();
+                System.out.println("The sum of the your rolls is " + userSum + ".");
+                if (isGameOver(userSum))
+                    break;
             }
         }
-        this.printSumRolls(this.dealerSum, "dealer");
     }
 
-    public int getMinRoll() {
+    /**
+     * If the dealer's sum is less than 14, the maximum of 3 rolls are added to dealerSum.
+     * If the dealer's sum is from 14-17 inclusive, the minimum of 3 rolls are added to dealerSum.
+     */
+    public void playDealer() {
+        while (dealerSum < 18) {
+            if (dealerSum < 14) {
+                System.out.println("The dealer gets the maximum of 3 rolls.");
+                dealerSum += tenDice.getMaxRoll(3);
+            }
+            else {
+                System.out.println("The dealer gets the minimum of 3 rolls.");
+                dealerSum += tenDice.getMinRoll(3);
+            }
+        }
+        System.out.println("The sum of the dealer's rolls is " + dealerSum + ".\n");
+    }
+
+    /**
+     * Each dice in dieArr are rolled.
+     * @return the minimum roll.
+     */
+    public int minRoll() {
         int min = 11;
         for (int i = 0; i < dieArr.size(); i++) {
             dieArr.get(i).roll();
@@ -142,7 +133,11 @@ public class Game {
         return min;
     }
 
-    public int getMaxRoll() {
+    /**
+     * Each dice in dieArr are rolled.
+     * @return the maximum roll.
+     */
+    public int maxRoll() {
         int max = 0;
         for (int i = 0; i < dieArr.size(); i++) {
             dieArr.get(i).roll();
@@ -153,18 +148,10 @@ public class Game {
         return max;
     }
 
-    // Method to print the user or the dealer's sum of their rolls
-    public void printSumRolls(int sum, String player) {
-        if (player.equals("user")) {
-            System.out.println("The sum of the your rolls is " + sum + ".");
-        }
-        else {
-            System.out.println("The sum of the dealer's rolls is " + sum + ".\n");
-        }
-    }
-
-    // Method to check if the game is over (if the sum is >= 21)
-    // Returns true if the game is over
+     /** Method to check if the game is over (if the sum is >= 21)
+     * @param sum
+     * @return true if the game is over, false if the game is not over
+     */
     public boolean isGameOver(int sum) {
         if (sum > 21) {
             System.out.println("Bust! Your sum is over 21.");
@@ -176,36 +163,37 @@ public class Game {
         return false;
     }
 
-    // Method to find and print the winner of the game
-    public String printWinner(int userSum, int dealerSum) {
-        String winner = "";
-        if (this.dealerSum > 21 && this.userSum > 21) {
-            return "You and the dealer both lost. No one wins.";
+     /**
+     * @param userSum
+     * @param dealerSum
+     * @return a String stating the result of the game
+     */
+    public String returnWinner(int userSum, int dealerSum) {
+        if (dealerSum > 21 && userSum > 21) {
+            return ("You and the dealer lost. No one wins.");
         }
-        else if (this.dealerSum > 21) {
+        if (dealerSum > 21) {
             return ("The dealer bust. You win!");
         }
-        else if (this.userSum > 21) {
+        if (userSum > 21) {
             return ("The dealer wins. Better luck next time.");
         }
-        else if (this.dealerSum == 21 && this.userSum == 21) {
+        if (dealerSum == 21 && userSum == 21) {
             return ("You and the dealer both equal 21. Tie.");
         }
-        else if (this.dealerSum == 21) {
+        if (dealerSum == 21) {
             return ("The dealer wins. Better luck next time!");
         }
-        else if (this.userSum == 21) {
-            System.out.println("You win!");
+        if (userSum == 21) {
+            return ("You win!");
         }
-        else if (this.dealerSum > this.userSum) {
+        if (dealerSum > userSum) {
             return ("The dealer is closer to 21. You lost.");
         }
-        else if (this.userSum > this.dealerSum) {
+        if (userSum > dealerSum) {
             return ("You're closer to 21. You win!");
         }
         return "The sums of both of your rolls are equal. Tie.";
-
-        //return winner;
     }
 
     public static void main(String[] args) {
